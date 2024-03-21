@@ -7,8 +7,8 @@ except ImportError:
   from llama_index.core import VectorStoreIndex, ServiceContext, Document, SimpleDirectoryReader
 
 st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
+openai.api_key = st.secrets["openai_key"]
 
-open_api_key = st.secrets.openai_key
 st.header("Chat with the your AI-Sales Bot 💬 📚")
 
 if "messages" not in st.session_state.keys(): # Initialize the chat message history
