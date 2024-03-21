@@ -28,7 +28,7 @@ if st.session_state.user_name is None:
         st.session_state.user_name = user_name  # Save the user's name in session_state
         # Update the welcome message to include the user's name and mimic Di Caprio's tone from The Wolf of Wall Street
         st.session_state.messages = [
-            {"role": "assistant", "content": f"Welcome aboard, {user_name}! I'm your AI-Sales Bot, ready to guide you through the future of driving with EVs. What can I do for you today? Let's make this as exciting as a ride down Wall Street!"}
+            {"role": "assistant", "content": f"Welcome aboard, {user_name}! I'm your AI-Sales Bot, ready to guide you through the future of driving with EVs. What can I do for you today? Let's make this as exciting as a ride down a Tesla!"}
         ]
 else:
     # Continue with the existing logic if the user's name is already provided
