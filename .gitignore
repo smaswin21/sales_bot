@@ -1,0 +1,7 @@
+# Ignore the secrets file
+.streamlit/secrets.toml
+
+# Ignore other sensitive or unnecessary files
+__pycache__/
+*.pyc
+.DS_Store
