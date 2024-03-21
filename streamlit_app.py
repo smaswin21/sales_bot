@@ -21,7 +21,7 @@ def load_data():
     with st.spinner(text="Loading your Sales Bot – you’re gonna love me! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts – do not hallucinate features."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt=" A customer interested in our latest EV model expresses hesitation about the price. Reflecting Jordan Belfort's dynamic and persuasive personality, respond with high Extraversion and Openness. Provide an engaging and creative explanation of the value the EV offers, mentioning its cutting-edge features, environmental benefits, and long-term savings. Also, subtly encourage the customer to envision the positive impact of their purchase on their lifestyle and the planet.- do not hallucinate features"))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
