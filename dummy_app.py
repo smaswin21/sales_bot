@@ -71,4 +71,3 @@ if st.session_state.messages[-1]["role"] != "assistant":
             # Save this interaction to the user's file
             save_convo(st.session_state.user_name, prompt, response.response)
 
-
