@@ -19,7 +19,6 @@ def save_convo(user_name, question, answer):
         file.write(f"Question: {question}\n")
         file.write(f"Answer: {answer}\n\n")
 
-    
 st.set_page_config(page_title="Chat with our brand-new sales bot, powered by Your_EV", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets["openai_key"]
 
