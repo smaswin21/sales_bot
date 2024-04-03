@@ -7,17 +7,26 @@ except ImportError:
     from llama_index.core import VectorStoreIndex, ServiceContext, SimpleDirectoryReader
 import os
 
+if 'review_submitted' not in st.session_state:
+    st.session_state.review_submitted = False
+
 survey_dir = './user_survey'
 if not os.path.exists(survey_dir):
     os.makedirs(survey_dir)
 
-def save_convo(user_name, question, answer):
+def save_convo(user_name, question, answer, review_rating=None):
     san_user_name = "".join([c for c in user_name if c.isalpha() or  c.isdigit() or c==' ']).rstrip()
     file_path = os.path.join(survey_dir, f"{san_user_name}.txt")
     # Append Mode
     with open(file_path, "a") as file:
         file.write(f"Question: {question}\n")
         file.write(f"Answer: {answer}\n\n")
+
+        if review_rating is not None:
+            file.write(f"Review Rating: {review_rating}\n\n")
+        file.write("\n")
+
+# Set the page configuration
 
 st.set_page_config(page_title="Chat with our brand-new sales bot, powered by Your_EV", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets["openai_key"]
@@ -54,6 +63,7 @@ chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
 # Chat input
 if prompt := st.chat_input("Your question"):
     st.session_state.messages.append({"role": "user", "content": prompt})
+    st.session_state.review_submitted = False
 
 # Display messages
 for message in st.session_state.messages:
@@ -65,9 +75,19 @@ if st.session_state.messages[-1]["role"] != "assistant":
         with st.spinner("Thinking..."):
             response = chat_engine.chat(prompt)
             st.write(response.response)
-            # Add the response to the message history
             st.session_state.messages.append({"role": "assistant", "content": response.response})
-            # Save this interaction to the user's file
             save_convo(st.session_state.user_name, prompt, response.response)
 
+# review option
 
+col1, col2 = st.columns([5, 1])
+with col2: 
+
+    review_rating = st.slider("Rate your experience", min_value=1, max_value=5, step=1)
+    if st.button("Submit Review"):
+       
+        last_prompt = st.session_state.messages[-2]["content"] if len(st.session_state.messages) > 1 else "No prompt"
+        save_convo(st.session_state.user_name, last_prompt, st.session_state.messages[-1]["content"], review_rating=review_rating)
+        st.success("Thank you for your feedback!")
+        
+        st.session_state.review_submitted = True

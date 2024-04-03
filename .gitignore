@@ -1,5 +1,6 @@
 # Ignore the secrets file
 .streamlit/secrets.toml
+.streamlit/config.toml
 
 # Ignore other sensitive or unnecessary files
 __pycache__/
