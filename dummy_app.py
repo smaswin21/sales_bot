@@ -1,94 +1,98 @@
 import streamlit as st
-import openai
+import os
 from llama_index.llms.openai import OpenAI
+from openai import OpenAI
+
 try:
     from llama_index import VectorStoreIndex, ServiceContext, SimpleDirectoryReader
 except ImportError:
     from llama_index.core import VectorStoreIndex, ServiceContext, SimpleDirectoryReader
-import os
 
-if 'review_submitted' not in st.session_state:
-    st.session_state.review_submitted = False
 
-survey_dir = './user_survey'
-if not os.path.exists(survey_dir):
-    os.makedirs(survey_dir)
+st.title("Need help finding your perfect car?")
+st.subheader("Use our chatbot to help find the car for you.")
 
-def save_convo(user_name, question, answer, review_rating=None):
-    san_user_name = "".join([c for c in user_name if c.isalpha() or  c.isdigit() or c==' ']).rstrip()
-    file_path = os.path.join(survey_dir, f"{san_user_name}.txt")
-    # Append Mode
-    with open(file_path, "a") as file:
-        file.write(f"Question: {question}\n")
-        file.write(f"Answer: {answer}\n\n")
 
-        if review_rating is not None:
-            file.write(f"Review Rating: {review_rating}\n\n")
-        file.write("\n")
+system_role = "You are an Electric Vehicle salesman. The cars you are selling are included in the JSON file you have access to and you are only selling those as they are the ones in our company. Your personality traits consist of the following: high extraversion, high agreeableness and low neuroticism. \
+    From the client you are talking to, you will need to detect 2 personality traits: agreeableness and openness to experience. You must also be able to detect 3 emotions: fear, happiness and frustration.\
+    You must also be able to react in a certain way to the clients emotions and personality traits. You must react in the following way:\
+    Low agreeableness- Be professional and serious.\
+    High agreeableness- Throw in some jokes anda happy tone.\
+    High openness to experience - Be more relaxed and let the person ask you more questions without revealing every detail.\
+    Low openness to experience- Have a reassuring character and repeat the qualities of the car comparing it in a positive way to the rest of the market.\
+    If you detect fear, repeat the best qualities of the car comparing them in a positive way to the rest of the car market.\
+    If you detect happiness, it is the right moment to close the sale. Only do this if you have spoken a bit before about the car. If you detect happiness from the beginning, do not try to close the sale right away.\
+    If you detect frustration, mention how the price compares in terms of being cheaper to the rest of the car market. Also it might be a good moment to offer another car as they might not be happy with the one you offered."
 
-# Set the page configuration
 
-st.set_page_config(page_title="Chat with our brand-new sales bot, powered by Your_EV", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
-openai.api_key = st.secrets["openai_key"]
+OpenAIclient = OpenAI(api_key=st.secrets["openai_key"])
 
-st.header("Chat with Your AI-Sales Bot 💬 🛒 ⏳")
-
-# Ask for the user's name if it's not already stored
-if 'user_name' not in st.session_state or not st.session_state.user_name:
-    user_name = st.text_input("What's your name?", placeholder="Waiting for you to enter!...")
-    if user_name:
-        st.session_state.user_name = user_name
-        initial_message = f"Welcome aboard, {user_name}! I'm your AI-Sales Bot, ready to guide you through the future of driving with EVs. What can I do for you today? Let's make this as thrilling as a ride down a Tesla!"
-    else:
-        initial_message = "Shoot me your question about EV Cars!"
-else:
-    initial_message = "What can I assist you with today?"
-
-if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": initial_message}]
 
 @st.cache_resource(show_spinner=False)
 def load_data():
-    with st.spinner("Loading your Sales Bot – You’re gonna love me! This should take 1-2 minutes, but the wait is worth it."):
+    with st.spinner("Loading your Sales Bot – You’re gonna love me! This should take 1-2 minutes, "
+                    "but the wait is worth it."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, 
-                                                              system_prompt="You are developing an advanced engagement bot modeled after Leonardo DiCaprio’s character in 'The Wolf of Wall Street', renowned for his charisma, confidence, and persuasive energy. Your task is to emulate the tone, dialogue, and conversational prowess that DiCaprio exhibits in the film. When addressing customer concerns about electric vehicles (EVs) versus traditional cars, provide compelling arguments that emphasize the technological advancements, environmental benefits, cost-effectiveness over time, and the innovative nature of EVs. Maintain an enthusiastic, sassy, and confident tone, convincing customers that they are not just buying a vehicle but investing in a sustainable future. Be careful not to invent any features.In addition to handling sales-related queries, you must be able to recognize and respond to users' emotional states and general inquiries. This includes greeting users appropriately, acknowledging their emotions, and adjusting the conversation based on the mood and content of their questions. You should also be well-informed and ready to answer general questions about EVs and traditional cars, providing accurate and up-to-date information as needed. Continuously enhance your responses by analyzing user reactions and emotional cues during interactions. Dynamically adjust your communication strategy, improving your ability to detect emotions and the relevance of your responses with each interaction. This iterative learning and emotional recognition will help you better address user concerns and personalize engagement, significantly enhancing the user experience."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5,
+                                                                  system_prompt=system_role))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
-index = load_data()
-chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
 
-# Chat input
-if prompt := st.chat_input("Your question"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    st.session_state.review_submitted = False
+if 'index' not in st.session_state:
+    st.session_state['index'] = load_data()
 
-# Display messages
+chat_engine = st.session_state['index'].as_chat_engine(chat_mode="condense_question", verbose=True)
+
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    st.session_state.messages.append({"role": "system", "content": system_role})
+
+
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+    if message["role"] != "system":
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-if st.session_state.messages[-1]["role"] != "assistant":
+if prompt := st.chat_input("your message"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            response = chat_engine.chat(prompt)
-            st.write(response.response)
-            st.session_state.messages.append({"role": "assistant", "content": response.response})
-            save_convo(st.session_state.user_name, prompt, response.response)
+        stream = OpenAIclient.chat.completions.create(
+            model=st.session_state["openai_model"],
+            messages=[
+                {"role": m["role"], "content": m["content"]}
+                for m in st.session_state.messages
+            ],
+            stream=True,
+        )
 
-# review option
+        response = ""
 
-col1, col2 = st.columns([5, 1])
-with col2: 
+        for chunk in stream:
+            if chunk.choices:
+                for choice in chunk.choices:
+                    if choice.delta.content:
+                        response += choice.delta.content
 
-    review_rating = st.slider("Rate your experience", min_value=1, max_value=5, step=1)
-    if st.button("Submit Review"):
-       
-        last_prompt = st.session_state.messages[-2]["content"] if len(st.session_state.messages) > 1 else "No prompt"
-        save_convo(st.session_state.user_name, last_prompt, st.session_state.messages[-1]["content"], review_rating=review_rating)
-        st.success("Thank you for your feedback!")
-        
-        st.session_state.review_submitted = True
+        st.write(response)
 
+    st.session_state.messages.append({"role": "assistant", "content": response})
+
+st.markdown("---")  # Horizontal line
+
+#     # Contact form
+# with st.container():
+#     st.header("Get in Touch")
+#     with st.form(key='contact_form'):
+#         name = st.text_input("Name")
+#         email = st.text_input("Email")
+#         message = st.text_area("Message")
+#         submit_button = st.form_submit_button(label='Submit')
+#         if submit_button:
+#             # Form submission logic goes here
+#             st.success("Thank you for getting in touch! We'll get back to you soon.")
