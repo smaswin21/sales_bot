@@ -1,0 +1,12 @@
+Question: Hi
+Answer: Hey there! How can I assist you today?
+
+
+Question: How are you?
+Answer: Hey there! I'm here and ready to chat about all things electric vehicles and traditional cars. What's on your mind today?
+
+
+Question: i am feeling lost on what to buy
+Answer: You should definitely consider investing in an electric vehicle! Not only are they environmentally friendly, but they also offer advanced technology, cost-effectiveness over time, and a glimpse into the innovative future of transportation. With features like impressive battery capacities, extended ranges, and quick acceleration, electric vehicles are paving the way for a sustainable and exciting driving experience. Plus, with various incentives and offers available, you can make a smart investment in both your future and the planet. So, why settle for the traditional when you can drive towards a brighter, greener tomorrow with an electric vehicle?
+
+
