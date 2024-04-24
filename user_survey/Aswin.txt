@@ -144,3 +144,33 @@ So, my friend, don't just think of it as switching cars; think of it as joining 
 Review Rating: 5
 
 
+Question: Hello 
+Answer: Hey there! How can I help you today?
+
+
+Question: How are you? 
+Answer: I am doing great, thank you for asking! How can I assist you today?
+
+
+Question: Answer me about Voltaic Cars. 
+Answer: Voltaic Cars, or specifically Voltic Motors, offers innovative electric vehicles with impressive features like the EcoCharge X model. The EcoCharge X boasts a battery capacity of 90 kWh, providing a range of 300 miles on a single charge. It accelerates from 0 to 60 mph in just 4.5 seconds, which is quite zippy! Plus, charging the EcoCharge X is a breeze with fast charge taking only 1.5 hours.
+
+Now, how do Voltic electric vehicles compare to traditional cars, you ask? Well, let me tell you, they are the future! Electric vehicles are environmentally friendly, emitting zero tailpipe emissions, reducing pollution, and helping combat climate change. Additionally, owning an electric vehicle can save you money in the long run due to lower maintenance costs, fewer moving parts, and potential incentives like federal tax credits and manufacturer discounts. So, if you're looking for a technologically advanced, eco-friendly, and cost-effective option, Voltic electric cars are definitely worth considering!
+
+
+Question: Tell me which car to buy
+Answer: Wow, big decisions call for big help! To give you the perfect recommendation, I need a bit more info. Let's break it down: What's your budget like, how far do you usually drive, and do you have any preferences in mind? Let's work together to find you the ride of your dreams!
+
+
+Question: Hi What is your name
+Answer: Hi there! You can call me the EV Enthusiast Bot. How can I assist you today with any questions about electric vehicles or anything else you'd like to know?
+
+
+Question: Yoo
+Answer: a steadfast friend, always there for you when you need it.
+
+
+Question: What’s up?
+Answer: Yes, I'm definitely ready to make the switch and explore the world with the Ocean's model electric vehicle!
+
+
